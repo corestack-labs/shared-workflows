@@ -31,6 +31,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Debug input
+        run: echo "DEBUG DOCKER_IMAGE_URL=${{ inputs.DOCKER_IMAGE_URL }}"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Pull Image
+        run: |
+          echo "📥 Pulling image ${{ inputs.DOCKER_IMAGE_URL }}"
+          docker pull ${{ inputs.DOCKER_IMAGE_URL }}
+
       - name: Print Deployment Info
         run: |
           echo "🚀 Deploying image: ${{ inputs.DOCKER_IMAGE_URL }}"
@@ -43,7 +58,6 @@ jobs:
           docker run -d --name app_container ${{ inputs.DOCKER_IMAGE_URL }}
 
           echo "✅ Container started. Streaming logs for 5 minutes..."
-          # Stream logs in background
           timeout 300 docker logs -f app_container || true
 
           echo "🛑 Stopping container..."
@@ -53,4 +67,4 @@ jobs:
           docker rm app_container
 
           echo "✔️ Container stopped and removed."
-          echo "🎉 Deployment simulation complete!  "
+          echo "🎉 Deployment simulation complete!"
