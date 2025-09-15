@@ -19,8 +19,8 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    outputs:
-      PUBLISHED_IMAGE_PATH: ${{ steps.push.outputs.PUBLISHED_IMAGE_PATH }}
+    outputs: # ✅ expose step output at job level
+      PUBLISHED_IMAGE_PATH: ${{ steps.push.outputs.published_image_path }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,4 +56,5 @@ jobs:
           echo "Also pushing image: $IMAGE_ID:latest"
           docker push $IMAGE_ID:latest
 
-          echo "PUBLISHED_IMAGE_PATH=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
+          # ✅ correctly set output (lowercase key!)
+          echo "published_image_path=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
