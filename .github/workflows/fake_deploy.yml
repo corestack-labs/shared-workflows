@@ -1,3 +1,23 @@
+# name: Fake Deploy
+
+# on:
+#   workflow_call:
+#     inputs:
+#       DOCKER_IMAGE_URL:
+#         required: true
+#         type: string
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Print Deployment Info
+#         run: |
+#           echo "🚀 Deploying image: ${{ inputs.DOCKER_IMAGE_URL }}"
+#           echo "💡 You can pull this image with:"
+#           echo "docker pull ${{ inputs.DOCKER_IMAGE_URL }}"
+
+
 name: Fake Deploy
 
 on:
@@ -16,3 +36,21 @@ jobs:
           echo "🚀 Deploying image: ${{ inputs.DOCKER_IMAGE_URL }}"
           echo "💡 You can pull this image with:"
           echo "docker pull ${{ inputs.DOCKER_IMAGE_URL }}"
+
+      - name: Run container for 5 minutes with live logs
+        run: |
+          echo "⏳ Starting container..."
+          docker run -d --name app_container ${{ inputs.DOCKER_IMAGE_URL }}
+
+          echo "✅ Container started. Streaming logs for 5 minutes..."
+          # Stream logs in background
+          timeout 300 docker logs -f app_container || true
+
+          echo "🛑 Stopping container..."
+          docker stop app_container
+
+          echo "🧹 Cleaning up..."
+          docker rm app_container
+
+          echo "✔️ Container stopped and removed."
+          echo "🎉 Deployment simulation complete!  "
