@@ -1,0 +1,18 @@
+name: Fake Deploy
+
+on:
+  workflow_call:
+    inputs:
+      DOCKER_IMAGE_URL:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Deployment Info
+        run: |
+          echo "🚀 Deploying image: ${{ inputs.DOCKER_IMAGE_URL }}"
+          echo "💡 You can pull this image with:"
+          echo "docker pull ${{ inputs.DOCKER_IMAGE_URL }}"
