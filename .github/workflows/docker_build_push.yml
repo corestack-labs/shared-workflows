@@ -15,12 +15,16 @@ on:
     secrets:
       GHCR_TOKEN:
         required: true
+    outputs:
+      published_image_path:                    # ✅ Expose output to caller
+        description: "Published Docker image path"
+        value: ${{ jobs.build_and_push.outputs.published_image_path }}
 
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    outputs: 
-      published_image_path: ${{ steps.push.outputs.published_image_path }}
+    outputs:
+      published_image_path: ${{ steps.push.outputs.published_image_path }}   # ✅ Job-level output
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,5 +60,4 @@ jobs:
           echo "Also pushing image: $IMAGE_ID:latest"
           docker push $IMAGE_ID:latest
 
-          # ✅ Output in lowercase
-          echo "published_image_path=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
+          echo "published_image_path=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT  # ✅ Set lowercase output
