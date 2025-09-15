@@ -19,8 +19,9 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    outputs: # ✅ expose step output at job level
-      PUBLISHED_IMAGE_PATH: ${{ steps.push.outputs.published_image_path }}
+    outputs:
+      published_image_path: ${{ steps.push.outputs.published_image_path }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,11 +51,9 @@ jobs:
           IMAGE_ID=ghcr.io/${{ github.repository }}/${{ inputs.IMAGE_NAME }}
           VERSION=${GITHUB_RUN_ID}
 
-          echo "Pushing image: $IMAGE_ID:$VERSION"
           docker push $IMAGE_ID:$VERSION
-
-          echo "Also pushing image: $IMAGE_ID:latest"
           docker push $IMAGE_ID:latest
 
-          # ✅ correctly set output (lowercase key!)
+          # output key must match job outputs (lowercase)
           echo "published_image_path=$IMAGE_ID:$VERSION" >> $GITHUB_OUTPUT
+
